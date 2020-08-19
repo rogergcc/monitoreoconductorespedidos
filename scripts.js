@@ -49,8 +49,14 @@ function initMap() { // Google Map Initialization...
         center: new google.maps.LatLng(-17.999185264756488, -70.22676184158168),
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-}
 
+    // map.data.loadGeoJson(
+    //     // "https://storage.googleapis.com/mapsdevsite/json/google.json"
+    //     "https://gist.githubusercontent.com/rogergcc/e19cc5885579b3c76219e12f8be13e46/raw/4fbf14688e02a877f72896635982305d5f7aebdd/zonaPinto.geojson"
+    //   );
+
+}
+//#region REGION TRANSISION
 function transition(result, data) {
     datos = data.val();
     console.log("data Mombre: " + datos);
@@ -65,7 +71,6 @@ function moveMarker() {
     position[0] += deltaLat;
     position[1] += deltaLng;
 
-
     //var latlng = new google.maps.LatLng(position[0], position[1]);
 
     var longlat = [position[1], position[0]];
@@ -75,12 +80,13 @@ function moveMarker() {
     // marker.setLngLat(longlat)
     // marker.addTo(map);
 
-
     if (i != numDeltas) {
         i++;
         setTimeout(moveMarker, delay);
     }
 }
+
+//#endregion
 
 
 // This Function will create a car icon with angle and add/display that marker on the map
@@ -135,7 +141,7 @@ function AddMarkerConductor(data) {
 
 }
 
-
+//#region REGION LISTADO CONDUCTORES
 function buildLococationConductoresList(data) {
     let array = data;
     let arraySize = array.length;
@@ -208,6 +214,8 @@ function flyToStore(currentFeature) {
     map.setZoom(17);
     map.panTo({ lat: latitud, lng: longitud });
 }
+//#endregion
+
 
 // get firebase database reference...
 var cars_Ref = firebase.database().ref('/Conductor');
@@ -257,14 +265,62 @@ cars_Ref.on('child_removed', function (data) {
 });
 
 
-function AddPedido(data) {
+function GetDataConductorFromPedido(ConductorCodigo){
+    //var conductor = firebase.database().ref('/Conductor');
+    //var conductor = firebase.database().ref('bills').child("-Lh-LgSqR1vSANRnA09G");
+    let conductorData;
+    var conductor = firebase.database().ref('/Conductor').child(ConductorCodigo);
+    conductor.once('value', function(snapshot){
+    
+        conductorData = snapshot.val();
+
+        
+        return conductorData;
+    });
+
+    // var conductor = firebase.database().ref(`/Conductor/${ConductorCodigo}`);
+    // conductor.on('value', function (snapshot) {
+    //     //updateStarCount(postElement, snapshot.val());
+    //     let conductor = data.val();
+
+    //     var datos = conductor;
+    //     return conductor;
+    // });
+
+    return conductorData;
+    
+}
+
+async function  GetDataClienteFromPedido(ClienteCodigo){
+    
+    const clienteref = firebase.database().ref('/Cliente/'+ClienteCodigo);
+    const snapshot = await clienteref.once('value');    
+    const clienteData = snapshot.val();
+
+    return clienteData;
+    
+}
+
+async function AddPedido(data) {
     var color = "";
-    if (data.val().estado == "Registrado") {
+    let pedido = data.val();
+    let cliente= await GetDataClienteFromPedido(pedido.codigoCliente);
+    // const clienteref = firebase.database().ref('/Cliente/'+pedido.codigoCliente);
+
+    // const snapshot = await clienteref.once('value');
+    
+    // const cliente = snapshot.val();
+
+    let conductor= GetDataConductorFromPedido(pedido.conductor);
+
+    
+    
+    if (pedido.estado == "Registrado") {
 
         color = "#1f3";
         colorConductor = "#1f3";
 
-    } else if (data.val().estado == "En curso") {
+    } else if (pedido.estado == "En curso") {
         color = "#f13";
         colorConductor = "#f13";
     } else {
@@ -278,17 +334,20 @@ function AddPedido(data) {
         fillOpacity: 1,
         strokeWeight: 1,
         anchor: new google.maps.Point(0, 5),
-        rotation: data.val().angle //<-- Car angle
+        rotation: pedido.angle //<-- Car angle
     };
 
     // Esta es la información del marker que se va a mostrar, el contenido acepta HTML
+    //<p>Cliente : ${cliente.nombre}  Tel : ${cliente.telefono}</p>
     var infowindow = new google.maps.InfoWindow({
-        content: `<strong>Pedido: ${data.val().nombre}
-                <p>Direccion: ${data.val().direccion}</p>
-                <p>Precio: ${data.val().precio}</p>
+        content: `<strong>Pedido: ${pedido.nombre}
+                <p>Cliente : ${cliente.nombre}  Tel : ${cliente.telefono}</p>
+                <p>Conductor : ${conductor.nombre}  Tel : ${conductor.telefono}</p>
+                <p>Direccion: ${pedido.direccion}</p>
+                <p>Precio: ${pedido.precio}</p>
                 </strong>`
     });
-    var uluru = { lat: parseFloat(data.val().latitud), lng: parseFloat(data.val().longitud) };
+    var uluru = { lat: parseFloat(pedido.latitud), lng: parseFloat(pedido.longitud) };
 
     var marker = new google.maps.Marker({
         position: uluru,
