@@ -50,6 +50,158 @@ function initMap() { // Google Map Initialization...
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
+
+
+    let coordinates = [
+        [
+            -70.233026,
+            -18.003737
+        ],
+        [
+            -70.232912,
+            -18.003633
+        ],
+        [
+            -70.235104,
+            -18.000706
+        ],
+        [
+            -70.236001,
+            -18.000844
+        ],
+        [
+            -70.236584,
+            -18.001228
+        ],
+        [
+            -70.240753,
+            -18.004721
+        ],
+        [
+            -70.241506,
+            -18.005073
+        ],
+        [
+            -70.240671,
+            -18.005785
+        ],
+        [
+            -70.24226,
+            -18.007449
+        ],
+        [
+            -70.2428,
+            -18.006953
+        ],
+        [
+            -70.242936,
+            -18.007039
+        ]
+    ];
+
+    let CoordinatePGX = [
+
+        { lat: -18.00286, lon: -70.23665 },
+        { lat: -18.00289, lon: -70.23671 },
+        { lat: -18.00294, lon: -70.23679 },
+        { lat: -18.0031, lon: -70.23702 },
+        { lat: -18.00375, lon: -70.23797 },
+        { lat: -18.00451, lon: -70.23894 },
+        { lat: -18.00505, lon: -70.23966 },
+        { lat: -18.00518, lon: -70.23986 },
+        { lat: -18.00518, lon: -70.23986 },
+        { lat: -18.00535, lon: -70.24014 },
+        { lat: -18.00574, lon: -70.24063 },
+        { lat: -18.00574, lon: -70.24063 },
+        { lat: -18.00579, lon: -70.24067 },
+        { lat: -18.00636, lon: -70.24121 },
+        { lat: -18.00689, lon: -70.24173 },
+        { lat: -18.00745, lon: -70.24226 },
+        { lat: -18.00823, lon: -70.24306 },
+        { lat: -18.00823, lon: -70.24306 },
+        { lat: -18.00834, lon: -70.24318 },
+        { lat: -18.00908, lon: -70.24399 },
+        { lat: -18.00955, lon: -70.24456 },
+        { lat: -18.00955, lon: -70.24456 },
+        { lat: -18.0096, lon: -70.24456 },
+        { lat: -18.00965, lon: -70.24455 },
+        { lat: -18.00985, lon: -70.24436 },
+        { lat: -18.01, lon: -70.24421 },
+        { lat: -18.01, lon: -70.24421 },
+        { lat: -18.01087, lon: -70.24527 },
+        { lat: -18.01093, lon: -70.24535 },
+        { lat: -18.01178, lon: -70.24642 },
+        { lat: -18.0131, lon: -70.24811 },
+        { lat: -18.01361, lon: -70.24877 },
+        { lat: -18.01407, lon: -70.24935 },
+        { lat: -18.01414, lon: -70.24945 },
+        { lat: -18.01414, lon: -70.24945 },
+        { lat: -18.01416, lon: -70.24947 },
+        { lat: -18.01416, lon: -70.24947 },
+        { lat: -18.0146, lon: -70.25012 },
+        { lat: -18.0151, lon: -70.25086 },
+        { lat: -18.0154, lon: -70.25133 },
+        { lat: -18.01544, lon: -70.25139 },
+        { lat: -18.01572, lon: -70.25181 },
+        { lat: -18.01572, lon: -70.25181 },
+        { lat: -18.01576, lon: -70.25191 },
+        { lat: -18.01599, lon: -70.25174 },
+        { lat: -18.01617, lon: -70.25161 },
+        { lat: -18.01617, lon: -70.25161 },
+        { lat: -18.01606, lon: -70.25148 },
+        { lat: -18.0157, lon: -70.25104 },
+        { lat: -18.01507, lon: -70.25028 },
+        { lat: -18.01507, lon: -70.25028 },
+    ];
+    var flightPlanCoordinates = [
+        // { lat: 37.772, lng: -122.214 },
+        // { lat: 21.291, lng: -157.821 },
+        // { lat: -18.142, lng: 178.431 },
+        // { lat: -27.467, lng: 153.027 }
+    ];
+
+    // for (let i = 0; i < coordinates.length; i++) {
+    //     let element = coordinates[i];
+    //     let position = { lat: element[1], lng: element[0] };
+
+    //     flightPlanCoordinates.push(position)
+
+    
+    // }
+
+
+    let point1 = { lat: -18.003802, lon: -70.232961 }
+    let point2 = { lat: -18.003802, lon: -70.232961 }
+
+    let point1LONGLAT = "-70.242913,-18.007071";
+    let point2LONGLAT = "-70.232961,-18.003802";
+    const url = `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?overview=false`;
+    //http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false
+
+
+    console.log(url);
+    
+    for (let i = 0; i < CoordinatePGX.length; i++) {
+        let element = CoordinatePGX[i];
+        let position = { lat: element.lat, lng: element.lon };
+
+        flightPlanCoordinates.push(position)
+
+
+    }
+
+
+    var flightPath = new google.maps.Polyline({
+        path: flightPlanCoordinates,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+    
+    //Route
+    // flightPath.setMap(map);
+
     // map.data.loadGeoJson(
     //     // "https://storage.googleapis.com/mapsdevsite/json/google.json"
     //     "https://gist.githubusercontent.com/rogergcc/e19cc5885579b3c76219e12f8be13e46/raw/4fbf14688e02a877f72896635982305d5f7aebdd/zonaPinto.geojson"
@@ -265,16 +417,16 @@ cars_Ref.on('child_removed', function (data) {
 });
 
 
-function GetDataConductorFromPedido(ConductorCodigo){
+function GetDataConductorFromPedido(ConductorCodigo) {
     //var conductor = firebase.database().ref('/Conductor');
     //var conductor = firebase.database().ref('bills').child("-Lh-LgSqR1vSANRnA09G");
     let conductorData;
     var conductor = firebase.database().ref('/Conductor').child(ConductorCodigo);
-    conductor.once('value', function(snapshot){
-    
+    conductor.once('value', function (snapshot) {
+
         conductorData = snapshot.val();
 
-        
+
         return conductorData;
     });
 
@@ -288,33 +440,33 @@ function GetDataConductorFromPedido(ConductorCodigo){
     // });
 
     return conductorData;
-    
+
 }
 
-async function  GetDataClienteFromPedido(ClienteCodigo){
-    
-    const clienteref = firebase.database().ref('/Cliente/'+ClienteCodigo);
-    const snapshot = await clienteref.once('value');    
+async function GetDataClienteFromPedido(ClienteCodigo) {
+
+    const clienteref = firebase.database().ref('/Cliente/' + ClienteCodigo);
+    const snapshot = await clienteref.once('value');
     const clienteData = snapshot.val();
 
     return clienteData;
-    
+
 }
 
 async function AddPedido(data) {
     var color = "";
     let pedido = data.val();
-    let cliente= await GetDataClienteFromPedido(pedido.codigoCliente);
+    let cliente = await GetDataClienteFromPedido(pedido.codigoCliente);
     // const clienteref = firebase.database().ref('/Cliente/'+pedido.codigoCliente);
 
     // const snapshot = await clienteref.once('value');
-    
+
     // const cliente = snapshot.val();
 
-    let conductor= GetDataConductorFromPedido(pedido.conductor);
+    let conductor = GetDataConductorFromPedido(pedido.conductor);
 
-    
-    
+
+
     if (pedido.estado == "Registrado") {
 
         color = "#1f3";
