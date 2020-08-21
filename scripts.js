@@ -448,8 +448,8 @@ async function GetDataClienteFromPedido(ClienteCodigo) {
 
 async function fetcRoute(point2LONGLAT,point1LONGLAT) {
     const rsp = await fetch(
-        // "http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false" 
-        `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?geometries=geojson&alternatives=false&steps=false&generate_hints=false`
+        // "https://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false" 
+        `https://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?geometries=geojson&alternatives=false&steps=false&generate_hints=false`
     ),
         data = await rsp.json();
     return data.routes[0].geometry.coordinates;
