@@ -12,7 +12,7 @@ body {
 #over_map {
     position: absolute;
     top: 10px;
-    left: 89%;
+    left: 86%;
     z-index: 99;
     background-color: #ccffcc;
     padding: 10px;
@@ -41,7 +41,9 @@ body {
 * {
     box-sizing: border-box;
 }
-
+.cantidades{
+    margin: .5em 1em;
+}
 .poimapbox-heading {
     background: #fff;
     border-bottom: 1px solid #ed1654;

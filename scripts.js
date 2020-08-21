@@ -1,4 +1,4 @@
-
+"use strict";
 // Replace your Configuration here..
 // var config = {
 //     apiKey: "AIzaSyCKp-RwlkZhJBehZLOSLhn1E7WpoXn9xoI",
@@ -26,13 +26,13 @@ firebase.initializeApp(config);
 // counter for online cars...
 var cars_count = 0;
 var pedidos_count = 0;
+var pedidos_nuevos =0;
 var colorConductor = "#00023";
 // markers array to store all the markers, so that we could remove marker when any car goes offline and its data will be remove from realtime database...
 var markers = [];
 var conductoresArray = [];
 
 var markersPedidos = [];
-var map;
 
 var numDeltas = 100;
 var delay = 10; //milliseconds
@@ -46,8 +46,10 @@ var datos;
 var flightPlanCoordinates = [
     
 ];
-var flightPath;
 
+let map;
+
+let flightPath;
 async function initMap() { // Google Map Initialization... 
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
@@ -480,6 +482,12 @@ async function RutaPedido(GetRoute) {
     
 }
 
+function removeLine() {
+    
+    flightPath.setMap(null);
+   
+
+  }
 
 async function AddPedido(data) {
 
@@ -527,13 +535,14 @@ async function AddPedido(data) {
 
         color = "#1f3";
         colorConductor = "#1f3";
+        pedidos_nuevos++;
 
     } else if (pedido.estado == "En curso") {
         color = "#f13";
         colorConductor = "#f13";
     } else {
         color = "#000";
-        flightPath.setMap(null);
+        removeLine();
     }
 
     var icon = { // car icon
@@ -588,6 +597,8 @@ async function AddPedido(data) {
 
     markersPedidos[data.key] = marker; // add marker in the markers array...
     document.getElementById("pedidos").innerHTML = pedidos_count;
+    document.getElementById("pedidos_nuevos").innerHTML = pedidos_nuevos;
+    
 }
 
 
@@ -604,6 +615,7 @@ pedidos_Ref.on('child_added', function (data) {
 // this event will be triggered on location change of any car...
 pedidos_Ref.on('child_changed', function (data) {
     markersPedidos[data.key].setMap(null);
+    
     AddPedido(data);
 });
 
@@ -611,7 +623,9 @@ pedidos_Ref.on('child_changed', function (data) {
 pedidos_Ref.on('child_removed', function (data) {
     markersPedidos[data.key].setMap(null);
     pedidos_count--;
+    pedidos_nuevos--;
     document.getElementById("pedidos").innerHTML = pedidos_count;
+    document.getElementById("pedidos_nuevos").innerHTML = pedidos_nuevos;
 });
 
 
