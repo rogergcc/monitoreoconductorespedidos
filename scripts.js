@@ -47,37 +47,6 @@ var flightPlanCoordinates = [
     
 ];
 var flightPath;
-async function fetcRoute(point2LONGLAT,point1LONGLAT) {
-    const rsp = await fetch(
-        // "http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false" 
-        `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?geometries=geojson&alternatives=false&steps=false&generate_hints=false`
-    ),
-        data = await rsp.json();
-    return data.routes[0].geometry.coordinates;
-}
-
-async function RutaPedido(GetRoute) {
-    flightPlanCoordinates=[];
-    for (let i = 0; i < GetRoute.length; i++) {
-        let element = GetRoute[i];
-        let position = { lat: element[1], lng: element[0] };
-
-        flightPlanCoordinates.push(position)
-
-
-    }
-    flightPath= new google.maps.Polyline({
-        path: flightPlanCoordinates,
-        geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
-
-    //Route
-    flightPath.setMap(map);
-    
-}
 
 async function initMap() { // Google Map Initialization... 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -476,9 +445,43 @@ async function GetDataClienteFromPedido(ClienteCodigo) {
 
 }
 
-async function AddPedido(data) {
 
+async function fetcRoute(point2LONGLAT,point1LONGLAT) {
+    const rsp = await fetch(
+        // "http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false" 
+        `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?geometries=geojson&alternatives=false&steps=false&generate_hints=false`
+    ),
+        data = await rsp.json();
+    return data.routes[0].geometry.coordinates;
+}
+
+async function RutaPedido(GetRoute) {
+    flightPlanCoordinates=[];
+    for (let i = 0; i < GetRoute.length; i++) {
+        let element = GetRoute[i];
+        let position = { lat: element[1], lng: element[0] };
+
+        flightPlanCoordinates.push(position)
+
+
+    }
+    flightPath= new google.maps.Polyline({
+        path: flightPlanCoordinates,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+        // fillColor: '#FF0000',
+        // fillOpacity: 0.35
+    });
+
+    //Route
+    flightPath.setMap(map);
     
+}
+
+
+async function AddPedido(data) {
 
     var color = "";
     let pedido = data.val();
