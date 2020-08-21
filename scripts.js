@@ -43,7 +43,43 @@ var position = [-18.007365329405616, -70.23910849676058]; //lat lon CEID
 
 var datos;
 
-function initMap() { // Google Map Initialization... 
+var flightPlanCoordinates = [
+    
+];
+var flightPath;
+async function fetcRoute(point2LONGLAT,point1LONGLAT) {
+    const rsp = await fetch(
+        // "http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false" 
+        `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?geometries=geojson&alternatives=false&steps=false&generate_hints=false`
+    ),
+        data = await rsp.json();
+    return data.routes[0].geometry.coordinates;
+}
+
+async function RutaPedido(GetRoute) {
+    flightPlanCoordinates=[];
+    for (let i = 0; i < GetRoute.length; i++) {
+        let element = GetRoute[i];
+        let position = { lat: element[1], lng: element[0] };
+
+        flightPlanCoordinates.push(position)
+
+
+    }
+    flightPath= new google.maps.Polyline({
+        path: flightPlanCoordinates,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+
+    //Route
+    flightPath.setMap(map);
+    
+}
+
+async function initMap() { // Google Map Initialization... 
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: new google.maps.LatLng(-17.999185264756488, -70.22676184158168),
@@ -153,21 +189,8 @@ function initMap() { // Google Map Initialization...
         { lat: -18.01507, lon: -70.25028 },
         { lat: -18.01507, lon: -70.25028 },
     ];
-    var flightPlanCoordinates = [
-        // { lat: 37.772, lng: -122.214 },
-        // { lat: 21.291, lng: -157.821 },
-        // { lat: -18.142, lng: 178.431 },
-        // { lat: -27.467, lng: 153.027 }
-    ];
-
-    // for (let i = 0; i < coordinates.length; i++) {
-    //     let element = coordinates[i];
-    //     let position = { lat: element[1], lng: element[0] };
-
-    //     flightPlanCoordinates.push(position)
-
     
-    // }
+
 
 
     let point1 = { lat: -18.003802, lon: -70.232961 }
@@ -178,28 +201,28 @@ function initMap() { // Google Map Initialization...
     const url = `http://router.project-osrm.org/route/v1/driving/${point2LONGLAT};${point1LONGLAT}?overview=false`;
     //http://router.project-osrm.org/route/v1/driving/-70.232961,-18.003802;-70.242913,-18.007071?geometries=geojson&alternatives=true&steps=true&generate_hints=false
 
-
-    console.log(url);
     
-    for (let i = 0; i < CoordinatePGX.length; i++) {
-        let element = CoordinatePGX[i];
-        let position = { lat: element.lat, lng: element.lon };
-
-        flightPlanCoordinates.push(position)
 
 
-    }
+    // for (let i = 0; i < GetRoute.length; i++) {
+    //     let element = GetRoute[i];
+    //     let position = { lat: element[1], lng: element[0] };
+
+    //     flightPlanCoordinates.push(position)
 
 
-    var flightPath = new google.maps.Polyline({
-        path: flightPlanCoordinates,
-        geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
-    
-    //Route
+    // }
+
+
+    // var flightPath = new google.maps.Polyline({
+    //     path: flightPlanCoordinates,
+    //     geodesic: true,
+    //     strokeColor: '#FF0000',
+    //     strokeOpacity: 1.0,
+    //     strokeWeight: 2
+    // });
+
+    // //Route
     // flightPath.setMap(map);
 
     // map.data.loadGeoJson(
@@ -454,6 +477,9 @@ async function GetDataClienteFromPedido(ClienteCodigo) {
 }
 
 async function AddPedido(data) {
+
+    
+
     var color = "";
     let pedido = data.val();
     let cliente = await GetDataClienteFromPedido(pedido.codigoCliente);
@@ -463,9 +489,36 @@ async function AddPedido(data) {
 
     // const cliente = snapshot.val();
 
-    let conductor = GetDataConductorFromPedido(pedido.conductor);
+    let conductor;
+    let conductorASIGNADO;
+    if (pedido.conductor=="") {
+        conductorASIGNADO=false;
+        
+    } else {
+        conductorASIGNADO=true;
+        conductor = GetDataConductorFromPedido(pedido.conductor);
 
+        let point1LONGLAT = conductor.longitud+","+conductor.latitud;
+        let point2LONGLAT = pedido.longitud+","+pedido.latitud;
 
+        let GetRoute = [];
+        try {
+            GetRoute = await fetcRoute(point2LONGLAT,point1LONGLAT);
+
+            console.log(GetRoute);
+
+            await RutaPedido(GetRoute);
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+    
+
+    // let coductorOcupadoLatitud = (conductor.situacion == "Disponible") ? true : false;
+
+    
+    
 
     if (pedido.estado == "Registrado") {
 
@@ -477,6 +530,7 @@ async function AddPedido(data) {
         colorConductor = "#f13";
     } else {
         color = "#000";
+        flightPath.setMap(null);
     }
 
     var icon = { // car icon
@@ -489,25 +543,41 @@ async function AddPedido(data) {
         rotation: pedido.angle //<-- Car angle
     };
 
+    // if(cliente!=null){
     // Esta es la información del marker que se va a mostrar, el contenido acepta HTML
     //<p>Cliente : ${cliente.nombre}  Tel : ${cliente.telefono}</p>
+
+    
+    let conductorDatos= "";
+
+    if(conductorASIGNADO){
+        conductorDatos= `<p>Conductor : ${conductor.nombre}  Tel : ${conductor.telefono}</p>`;
+    }else{
+        
+
+        conductorDatos="PEDIDO REGISTRADO, CONDUCTOR NO ASIGNADO";
+    }
+
     var infowindow = new google.maps.InfoWindow({
         content: `<strong>Pedido: ${pedido.nombre}
                 <p>Cliente : ${cliente.nombre}  Tel : ${cliente.telefono}</p>
-                <p>Conductor : ${conductor.nombre}  Tel : ${conductor.telefono}</p>
+                ${conductorDatos}
                 <p>Direccion: ${pedido.direccion}</p>
                 <p>Precio: ${pedido.precio}</p>
                 </strong>`
     });
+
+// }
     var uluru = { lat: parseFloat(pedido.latitud), lng: parseFloat(pedido.longitud) };
 
+    if(pedido!=null){
     var marker = new google.maps.Marker({
         position: uluru,
         icon: icon,
         map: map,
-        title: data.val().nombre
+        title: pedido.nombre
     });
-
+    }
     // Al hacer click sobre el marker mostraremos su información en una ventana
     marker.addListener('click', function () {
         infowindow.open(map, marker);
