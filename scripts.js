@@ -10,13 +10,14 @@
 // };
 
 const config = {
-    apiKey: "AIzaSyCKp-RwlkZhJBehZLOSLhn1E7WpoXn9xoI",
-    authDomain: "holafirebaseesis-4ca1e.firebaseapp.com",
-    databaseURL: "https://holafirebaseesis-4ca1e.firebaseio.com",
-    projectId: "holafirebaseesis-4ca1e",
-    storageBucket: "holafirebaseesis-4ca1e.appspot.com",
-    messagingSenderId: "488365125892",
-    appId: "1:488365125892:web:3ca6c42e1c23973eb4e051"
+    apiKey: "AIzaSyDGk-1z3xyFg15js6A1RtNTs4wgYmmvh3Q",
+    authDomain: "maquipuray-5d99e.firebaseapp.com",
+    databaseURL: "https://maquipuray-5d99e.firebaseio.com",
+    projectId: "maquipuray-5d99e",
+    storageBucket: "maquipuray-5d99e.appspot.com",
+    messagingSenderId: "448808572127",
+    appId: "1:448808572127:web:2cb534550a234b1b2ec56a",
+    measurementId: "G-ZTH4D684GD"
 };
 firebase.initializeApp(config);
 
