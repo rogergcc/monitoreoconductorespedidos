@@ -305,6 +305,7 @@ function buildLococationConductoresList(data) {
 
 
         var listing = listings.appendChild(document.createElement('div'));
+        // listings.innerHTML='<img class=protocolo src=protocolo.png></img>';
         listing.innerHTML
         listing.className = 'amenity-poi';
 
@@ -312,6 +313,7 @@ function buildLococationConductoresList(data) {
         listing.style.backgroundColor = color;
 
         listing.id = "listing-" + i;
+        
 
         var link = listing.appendChild(document.createElement('a'));
         link.innerHTML = "";
@@ -325,7 +327,9 @@ function buildLococationConductoresList(data) {
             '<h3>' + conductor.nombre + '</h3>' +
             '<p>' + conductor.telefono + '</p>' +
             '<p>' + conductor.fechaRegistro + '</p>' +
-            '<p>? ' + conductor.email + '</p>'
+            '<p> ' + conductor.email + '</p>'+
+            '<a target=_blank class=protocolo href=https://www.municaj.gob.pe/archivos/vialidad_transporte/Protocolos-Seguridad-Transporte-Publico-Especial.pdf> Protocolo</a>'
+            
 
         link.addEventListener('click', function (e) {
             // Update the conductor to the Park associated with the clicked link

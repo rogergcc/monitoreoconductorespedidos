@@ -44,6 +44,24 @@ body {
 .cantidades{
     margin: .5em 1em;
 }
+
+
+a.protocolo[href$=".pdf"]:before {
+    /* PDF file */
+width:32px;
+height:32px;
+background:url('http://wwwimages.adobe.com/content/dam/acom/en/legal/images/badges/Adobe_PDF_file_icon_32x32.png');
+display:inline-block;
+content:' ';
+}
+a.protocolo[href$=".pdf"]:after { content: " (PDF)"; }
+
+img.protocolo {
+    width: 55px;
+    position: absolute;
+    right: 5px;
+}
+
 .poimapbox-heading {
     background: #fff;
     border-bottom: 1px solid #ed1654;
